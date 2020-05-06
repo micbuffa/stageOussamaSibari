@@ -3,7 +3,7 @@
     rel='stylesheet' type='text/css'>
 <script
     src="https://mainline.i3s.unice.fr/WebAudioPluginBank/bower_components/webaudio-controls2/webcomponents-lite.js">
-    </script>
+</script>
 <script>
 </script>
 <script>
@@ -376,7 +376,6 @@
             z-index: 10;
             border: 1px solid red;
         }
-
     </style>
     <div class="pedal draggable" style="box-sizing: border-box; transform: translate(-197.5px, -255.362px);" id="pedal"
         data-x="-197.5" data-y="-255.361604435372">
@@ -488,10 +487,62 @@
             // to this main.html file)
             //this.setImageBackground("/img/BigMuffBackground.png");
 
+            // Animation graphique des courbes de fréquences
+            this.startAnimation();
+
         }
 
-      
+        startAnimation() {
+            this.canvas = this._root.querySelector("#canvasFreq");
+            this.ctx = this.canvas.getContext("2d");
+            this.w = this.canvas.width;
+            this.h = this.canvas.height;
+            this.anaIn = this._plug.getAnalyserIn();
+            this.anaOut = this._plug.getAnalyserOut();
 
+            this.animateFrequencies(); // starts animation at 60 frames/s
+        }
+
+        animateFrequencies() {
+            // 1 - on efface le canvas
+            //this.ctx.clearRect(0, 0, this.w, this.h);
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            this.ctx.fillRect(0, 0, this.w, this.h);
+
+            // 2 - on dessine les fréquences
+            // Get the analyser data
+            this.drawFrequencies(this.anaIn, "rgba(255, 0, 0, 1)");
+            this.drawFrequencies(this.anaOut, "rgba(0, 255, 0, 0.5)");
+
+            // 3 - on rappelle l'animation
+            requestAnimationFrame(this.animateFrequencies.bind(this));
+        }
+
+        drawFrequencies(ana, color) {
+            ana.getByteFrequencyData(ana.dataArray);
+
+            var barWidth = this.w / ana.bufferLength;
+            barWidth += 8;
+            var barHeight;
+            var x = 0;
+
+            this.ctx.fillStyle = color;
+            // values go from 0 to 256 and the canvas heigt is 100. Let's rescale
+            // before drawing. This is the scale factor
+            this.heightScale = this.h / 128;
+
+            for (var i = 0; i < ana.bufferLength; i++) {
+                barHeight = ana.dataArray[i];
+
+                //this.ctx.fillStyle = 'rgb(' + (barHeight + 100) + ',50,50)';
+                barHeight *= this.heightScale;
+                this.ctx.fillRect(x, this.h - barHeight / 2, barWidth, barHeight / 2);
+
+                // 1 is the number of pixels between bars
+                x += barWidth + 1;
+            }
+
+        }
         fixRelativeImagePathsInCSS(imageRelativeURI) {
 
             // change webaudiocontrols relative paths for spritesheets to absolute
@@ -614,18 +665,15 @@
                 console.log("CUTOFF value = " + e.target.value);
                 let val = parseFloat(e.target.value).toFixed(1);
 
-                if(e.target.value < 1000)
-                {   
+                if (e.target.value < 1000) {
                     this._root.querySelector("#cutoffValue").innerHTML = val + "Hz";
+                    this._plug.setParam("/TemperOussama/CUTOFF", e.target.value);
+                } else {
+                    this._root.querySelector("#cutoffValue").innerHTML = parseFloat(val * (1 / 1000))
+                        .toFixed(1) + "kHz";
                     this._plug.setParam("/TemperOussama/CUTOFF", e.target.value);
                 }
 
-                else
-                {   
-                    this._root.querySelector("#cutoffValue").innerHTML = parseFloat(val*(1/1000)).toFixed(1) + "kHz";
-                    this._plug.setParam("/TemperOussama/CUTOFF", e.target.value);
-                }
-                
             });
 
             this._root.getElementById("/TemperOussama/DRIVE").addEventListener("input", (e) => {
