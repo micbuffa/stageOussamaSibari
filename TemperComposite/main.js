@@ -21,7 +21,7 @@ window.Temper = class Temper extends WebAudioPluginCompositeNode {
 createAnalyser() {
   let a = this.context.createAnalyser();
   // Try changing for lower values: 512, 256, 128, 64...
-  a.fftSize = 256;
+  a.fftSize = 512;
   a.bufferLength = a.frequencyBinCount;
   a.dataArray = new Uint8Array(a.bufferLength);
 

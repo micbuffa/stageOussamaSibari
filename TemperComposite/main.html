@@ -506,13 +506,13 @@
         animateFrequencies() {
             // 1 - on efface le canvas
             //this.ctx.clearRect(0, 0, this.w, this.h);
-            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
             this.ctx.fillRect(0, 0, this.w, this.h);
 
             // 2 - on dessine les fréquences
             // Get the analyser data
             this.drawFrequencies(this.anaIn, "rgba(255, 0, 0, 1)");
-            this.drawFrequencies(this.anaOut, "rgba(0, 255, 0, 0.5)");
+            this.drawFrequencies(this.anaOut, "rgba(255, 165, 0, 0.5)");
 
             // 3 - on rappelle l'animation
             requestAnimationFrame(this.animateFrequencies.bind(this));
@@ -522,7 +522,7 @@
             ana.getByteFrequencyData(ana.dataArray);
 
             var barWidth = this.w / ana.bufferLength;
-            barWidth += 8;
+            barWidth += 1;
             var barHeight;
             var x = 0;
 
@@ -539,7 +539,7 @@
                 this.ctx.fillRect(x, this.h - barHeight / 2, barWidth, barHeight / 2);
 
                 // 1 is the number of pixels between bars
-                x += barWidth + 1;
+                x += barWidth + 6;
             }
 
         }
