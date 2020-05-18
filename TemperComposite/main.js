@@ -34,7 +34,7 @@ createAnalyser() {
   }
   connectNodes() {
     // On va charger le noeud du Temper d'origine
-    var pluginURL = "..";
+    var pluginURL = "./faust";
     var plugin = new FaustTemperOussama(ctx, pluginURL);
 
     plugin.load().then((node) => {
