@@ -3,7 +3,7 @@
     rel='stylesheet' type='text/css'>
 <script
     src="https://mainline.i3s.unice.fr/WebAudioPluginBank/bower_components/webaudio-controls2/webcomponents-lite.js">
-</script>
+    </script>
 <script>
 </script>
 <script>
@@ -369,14 +369,72 @@
             left: 43px;
         }
 
+        #overlay {
+            position: absolute;
+            display: none;
+            width: 355px;
+            height: 133px;
+            top: 184px;
+            left: 196px;
+            background-color: rgba(255, 255, 255, 0.5);
+            z-index: 10;
+            cursor: pointer;
+
+        }
+
+        #text {
+            transition: 2s ease;
+            position: absolute;
+            text-align: center;
+            top: 12px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 20px;
+        }
+
+
+        #overlayButton {
+            background-color: orange;
+            position: absolute;
+            z-index: 9;
+            top: 50px;
+            left: 654px;
+            border: none;
+            color: white;
+            padding: 9px 19px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 10px;
+            margin: 4px 2px;
+            cursor: pointer;
+            transition-duration: 0.4s;
+            border-radius: 12px;
+            opacity: 0.8;
+        }
+
+        #overlayButton:hover {
+            background-color: white;
+            color: orange;
+        }
+
+        #overlayButton1 {
+            background-color: white;
+            color: black;
+            border: 2px solid orange;
+        }
+
+
+
+
         #canvasFreq {
             position: absolute;
             left: 195px;
-            top: 182px;
+            top: 183px;
             z-index: 10;
-            border: 1px solid red;
+            border: 1px solid orange;
         }
     </style>
+
     <div class="pedal draggable" style="box-sizing: border-box; transform: translate(-197.5px, -255.362px);" id="pedal"
         data-x="-197.5" data-y="-255.361604435372">
         <canvas id="canvasFreq" width=355 height=133></canvas>
@@ -385,12 +443,25 @@
             <h4></h4>
             <p class="pedalLabel" id="test"></p>
         </div>
-        <!-- <p id="labeldiv" style="border-style: dashed; top: 68px;">tototo</p> -->
-        <!-- <figure>
-        <img id="background-image" alt="tototo">
-        <figcaption>tototo</figcaption>
-    </figure> -->
-        <!-- <div class="text-block" id="froala-editor"></div> -->
+
+        <div id="overlay">
+            <div id="text">
+                <b>DSP Code</b> by
+                <i> Nick Thomson
+                    <br>
+                    <a href="https://www.creativeintent.co/" target="_blank">Creative Intent</a>
+                </i>
+                <br>
+                <br>
+                <b>WebAudio port</b> by <i> <a href="https://github.com/micbuffa/" target="_blank">@micbuffa</a> & Oussama Sibari</i>
+            </div>
+        </div>
+
+        <div style="padding:20px">
+            <button id="overlayButton">About</button>
+        </div>
+
+
         <div class="knob" id="CURVE">
             <div id="curveValue">1.7</div>
             <webaudio-knob src="./img/knobs/sibknob2.png" height="83" width="83" sprites="126" min="0.1" max="4"
@@ -437,18 +508,26 @@
 
         </div>
         <div class="switch" id="bypass">
-            <webaudio-switch src="./img/switches/tempON.png" height="33" width="265" midilearn="true"
+            <webaudio-switch src="./img/switches/tempON2.png" height="33" width="311" midilearn="true"
                 id="/TemperOussama/bypass"></webaudio-switch>
 
         </div>
+
+
     </div>
+
+
+
 </template>
+
 <script>
     let TemperOussamaTemp = document.currentScript.ownerDocument.querySelector('#temperoussama');
     class TemperOussamaGui extends HTMLElement {
 
 
+
         constructor(plug) {
+
 
             super();
 
@@ -490,6 +569,23 @@
             // Animation graphique des courbes de fréquences
             this.startAnimation();
 
+            let overlayButton = this._root.querySelector("#overlayButton");
+            overlayButton.onclick = this.displayOver.bind(this);
+            let divOverlay = this._root.querySelector("#overlay");
+
+            divOverlay.onclick = this.hideOver.bind(this);
+
+
+
+        }
+
+        displayOver() {
+            this._root.querySelector("#overlay").style.display = "block";
+        }
+
+        hideOver() {
+            console.log("mesg div cliqué");
+            this._root.querySelector("#overlay").style.display = "none";
         }
 
         startAnimation() {
@@ -509,12 +605,12 @@
             // change last number for blur effect. Closer to 0 = lots of blue
             // 1 = no blur...
             this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-            this.ctx.fillRect(0, 0, this.w, this. h);
+            this.ctx.fillRect(0, 0, this.w, this.h);
 
             // 2 - on dessine les fréquences
             // Get the analyser data
             this.drawFrequencies(this.anaIn, "rgba(255, 165, 0, 1)", false);
-            this.drawFrequencies(this.anaOut, "rgba(255, 0, 0, 1)",true);
+            this.drawFrequencies(this.anaOut, "rgba(255, 0, 0, 1)", true);
 
             // 3 - on rappelle l'animation
             requestAnimationFrame(this.animateFrequencies.bind(this));
@@ -528,7 +624,7 @@
             var barHeight;
             var x = 0;
 
-            if(offset) {
+            if (offset) {
                 x = barWidth;
             }
 
@@ -545,7 +641,7 @@
                 this.ctx.fillRect(x, this.h - barHeight / 2, barWidth, barHeight / 2);
 
                 // last numer is the number of pixels between bars
-                x += barWidth+4;
+                x += barWidth + 4;
             }
 
         }
